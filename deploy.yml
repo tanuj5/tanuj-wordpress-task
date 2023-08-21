@@ -24,7 +24,7 @@ jobs:
           php-version: "8.1"
           tools: composer:v2
       - name: RUN COMPOSER
-        run: cd /var/www/html/ && composer install && php artisan build
+        run: cd /home/user/website/ && composer install && php artisan build
       - name: Before Deployment
         uses: appleboy/ssh-action@master
         with:
@@ -43,7 +43,6 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           SOURCE: "themes/my-theme/"
           TARGET: "/var/www/html/wp/wp-content/themes/my-theme/"
-          EXCLUDE: "/node_modules/"
       - name: After Deployment
         uses: appleboy/ssh-action@master
         with:
