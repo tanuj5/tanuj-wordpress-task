@@ -1,0 +1,54 @@
+Task description:
+Your task is to set up an automated deployment process for a WordPress website
+using Nginx as the web server, LEMP (Linux, Nginx, MySQL, PHP) stack, and GitHub
+Actions as the CI/CD automation tool. The deployment process should follow security
+best practices and ensure optimal performance of the website.
+
+
+1. Server Provisioning:
+    In order to create a Virtual Private Server on a public cloud I choose AWS, and selected Terraform to create the infrastructure as a code (IaaC).
+    This infrastructure includes the following components:
+        1.) A Virtual Private Cloud (VPC)
+        2.) 2 Subnets: Public Subnet to display the website to the world and a Private Subnet to setup the database for the WordPress website.
+        3.) A public-facing Internet Gateway to connect VPC/Network to the internet
+        4.) A NAT gateway to connect Network to the internet
+        5.) 2 EC2 Instances: An EC2 instance in the public subnet to host the WordPress website and another instance to run the MySQL server to run securely.
+
+2. LEMP Server Configuration:
+    1. Create 2 Ubuntu 22.04 EC2 Instances on AWS cloud using Terraform.
+    2. Install Nginx as web server on the instancein public subnet:
+        sudo apt install nginx
+       Allow firewall access to Nginx:
+         sudo ufw allow 'Nginx Full'
+         sudo ufw enable
+    3. Install MySQL server on the instance in the Private subnet:
+        sudo apt install mysql-server
+        sudo mysql_secure_installation
+    4. Install PHP on the instance in Public Subnet:
+        sudo apt install php8.1-fpm php8.1 php8.1-common php8.1-mysql php8.1-xml php8.1-xmlrpc php8.1-curl php8.1-gd php8.1-imagick php8.1-cli php8.1-imap php8.1-mbstring php8.1-opcache php8.1-soap php8.1-zip php8.1-intl php8.1-bcmath unzip -y
+    5. Modify Nginx configurations to load PHP website.
+
+3. Setup WordPress website on the VPS:
+    1. Create Database and a new user for the website on the instance in private subnet.
+    2. Download and extract WordPress:
+        wget https://wordpress.org/latest.tar.gzwget https://wordpress.org/latest.tar.gz
+        tar -zxvf latest.tar.gz --strip-components=1
+    3. Configure Nginx for WordPress- Makes required changes in the file with the domain name under the folder /etc/nginx/sites-available/.
+    4. Congigure the wp-config.php file to dpecify details for database connectivity.
+    5. Type in the public IP address of the instance in browser and setup WordPress based on the instrcutions.
+
+4. Implement SSL certificate:
+    1. After getting a free domain from the internet, use Let's Encrypt to get certificates.
+        Domain name: tanujtask.ddns.Network
+    2. Install certbot:
+        sudo snap install --classic certbot
+    3. Enter domain name under configuration file in /etc/nginx/sites-available/ folder.
+    4. Getting the certificate:
+        sudo certbot --nginx -d tanujtask.ddns.net 
+
+5. Optimize Nginx server configuration:
+    All the changes were made in the /etc/nginx/sites-available/tanujmathurtask.tk file.
+
+6. Setup GitHub Actions workflow to automatically deploy website:
+    1. Created secrets on GitHub under the repository to connect to the EC2 instance securely.
+    2. Create a deploy.yml file to use an Ubuntu server to install dependencies, execute the code, and transfer files to the server to reflect the changes.
